@@ -16,290 +16,384 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
-# ===== CSS =====
 css = """
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&family=Bebas+Neue&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500&display=swap');
 
     /* ===== BASE ===== */
     .stApp {
-        background-color: #0B0F0B !important;
-        color: #C8D8C8 !important;
-        font-family: 'Rajdhani', sans-serif !important;
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e) !important;
+        background-attachment: fixed !important;
+        color: #ffffff !important;
+        font-family: 'Inter', sans-serif !important;
+        min-height: 100vh !important;
+    }
+
+    /* Animated background orbs */
+    .stApp::before {
+        content: '' !important;
+        position: fixed !important;
+        width: 500px !important;
+        height: 500px !important;
+        background: radial-gradient(circle, rgba(100, 255, 200, 0.08) 0%, transparent 70%) !important;
+        top: -100px !important;
+        right: -100px !important;
+        pointer-events: none !important;
+        z-index: 0 !important;
     }
 
     /* ===== SIDEBAR ===== */
     section[data-testid="stSidebar"] {
-        background: #0D110D !important;
-        border-right: 1px solid rgba(80, 180, 80, 0.2) !important;
+        background: rgba(255, 255, 255, 0.04) !important;
+        backdrop-filter: blur(20px) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
     }
 
-    section[data-testid="stSidebar"] p {
-        color: #C8D8C8 !important;
-        font-family: 'Share Tech Mono', monospace !important;
-        font-size: 11px !important;
+    section[data-testid="stSidebar"] p,
+    section[data-testid="stSidebar"] label {
+        color: rgba(255, 255, 255, 0.7) !important;
+        font-family: 'Space Mono', monospace !important;
+        font-size: 10px !important;
+        letter-spacing: 1px !important;
     }
 
-    /* ===== STATS CARDS ===== */
+    section[data-testid="stSidebar"] h3 {
+        color: #64FFC8 !important;
+        font-family: 'Syne', sans-serif !important;
+        letter-spacing: 2px !important;
+        font-size: 13px !important;
+    }
+
+    /* ===== STATS CARDS — GLASSMORPHISM ===== */
     div[data-testid="metric-container"] {
-        background: #111811 !important;
-        border: 1px solid rgba(80, 180, 80, 0.25) !important;
-        border-left: 3px solid #4CAF50 !important;
-        padding: 16px !important;
-        border-radius: 0px !important;
+        background: rgba(255, 255, 255, 0.07) !important;
+        backdrop-filter: blur(16px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border-top: 2px solid #64FFC8 !important;
+        padding: 20px !important;
+        border-radius: 12px !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+        transition: transform 0.2s, box-shadow 0.2s !important;
+    }
+
+    div[data-testid="metric-container"]:hover {
+        transform: translateY(-4px) !important;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3),
+                    0 0 20px rgba(100, 255, 200, 0.1) !important;
     }
 
     [data-testid="stMetricLabel"] p {
-        font-family: 'Share Tech Mono', monospace !important;
-        font-size: 10px !important;
-        color: #556655 !important;
+        font-family: 'Space Mono', monospace !important;
+        font-size: 9px !important;
+        color: rgba(255, 255, 255, 0.4) !important;
         letter-spacing: 2px !important;
         text-transform: uppercase !important;
     }
 
     [data-testid="stMetricValue"] {
-        font-family: 'Bebas Neue', monospace !important;
-        color: #7FFF00 !important;
-        font-size: 36px !important;
-        font-weight: 400 !important;
-        text-shadow: 0 0 10px rgba(127, 255, 0, 0.3) !important;
+        font-family: 'Syne', sans-serif !important;
+        color: #64FFC8 !important;
+        font-size: 38px !important;
+        font-weight: 800 !important;
+        text-shadow: 0 0 20px rgba(100, 255, 200, 0.4) !important;
     }
 
     /* ===== TABS ===== */
     .stTabs [data-baseweb="tab-list"] {
-        background: #0D110D !important;
-        border-bottom: 1px solid rgba(80, 180, 80, 0.2) !important;
+        background: rgba(255, 255, 255, 0.04) !important;
+        backdrop-filter: blur(10px) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 8px 8px 0 0 !important;
+        padding: 4px 4px 0 !important;
+        gap: 4px !important;
     }
 
     .stTabs [data-baseweb="tab"] {
-        font-family: 'Share Tech Mono', monospace !important;
-        font-size: 10px !important;
+        font-family: 'Space Mono', monospace !important;
+        font-size: 9px !important;
         letter-spacing: 2px !important;
-        color: #3a4a3a !important;
+        color: rgba(255, 255, 255, 0.35) !important;
         background: transparent !important;
-        border-radius: 0px !important;
-        padding: 12px 20px !important;
+        border-radius: 6px 6px 0 0 !important;
+        padding: 10px 18px !important;
+        transition: all 0.2s !important;
+    }
+
+    .stTabs [data-baseweb="tab"]:hover {
+        color: rgba(255, 255, 255, 0.7) !important;
+        background: rgba(255, 255, 255, 0.05) !important;
     }
 
     .stTabs [aria-selected="true"] {
-        color: #7FFF00 !important;
-        background: rgba(127, 255, 0, 0.05) !important;
-        border-bottom: 2px solid #7FFF00 !important;
-        text-shadow: 0 0 8px rgba(127, 255, 0, 0.4) !important;
+        color: #64FFC8 !important;
+        background: rgba(100, 255, 200, 0.08) !important;
+        border-bottom: 2px solid #64FFC8 !important;
+        text-shadow: 0 0 10px rgba(100, 255, 200, 0.5) !important;
     }
 
     /* ===== BUTTONS ===== */
     .stButton > button {
-        background: transparent !important;
-        color: #7FFF00 !important;
-        font-family: 'Share Tech Mono', monospace !important;
-        font-size: 11px !important;
+        background: rgba(100, 255, 200, 0.1) !important;
+        color: #64FFC8 !important;
+        font-family: 'Space Mono', monospace !important;
+        font-size: 10px !important;
         font-weight: 700 !important;
-        letter-spacing: 3px !important;
-        border: 1px solid #4CAF50 !important;
+        letter-spacing: 2px !important;
+        border: 1px solid rgba(100, 255, 200, 0.3) !important;
         padding: 12px 20px !important;
-        border-radius: 0px !important;
+        border-radius: 8px !important;
         width: 100% !important;
-        transition: all 0.2s ease !important;
-        text-transform: uppercase !important;
+        backdrop-filter: blur(10px) !important;
+        transition: all 0.25s ease !important;
     }
 
     .stButton > button:hover {
-        background: #4CAF50 !important;
-        color: #000000 !important;
-        box-shadow: 0 0 20px rgba(76, 175, 80, 0.3) !important;
+        background: rgba(100, 255, 200, 0.2) !important;
+        border-color: #64FFC8 !important;
+        color: #ffffff !important;
+        box-shadow: 0 0 25px rgba(100, 255, 200, 0.25),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+        transform: translateY(-2px) !important;
     }
 
     /* ===== TEXT AREA ===== */
     .stTextArea textarea {
-        background: #0D110D !important;
-        border: 1px solid rgba(80, 180, 80, 0.25) !important;
-        color: #C8D8C8 !important;
-        font-family: 'Share Tech Mono', monospace !important;
-        font-size: 13px !important;
-        border-radius: 0px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        font-family: 'Space Mono', monospace !important;
+        font-size: 12px !important;
+        border-radius: 10px !important;
+        transition: all 0.2s !important;
     }
 
     .stTextArea textarea:focus {
-        border-color: #7FFF00 !important;
-        box-shadow: 0 0 10px rgba(127, 255, 0, 0.1) !important;
+        border-color: rgba(100, 255, 200, 0.5) !important;
+        box-shadow: 0 0 20px rgba(100, 255, 200, 0.1) !important;
+        background: rgba(255, 255, 255, 0.08) !important;
     }
 
     .stTextArea textarea::placeholder {
-        color: #2a3a2a !important;
+        color: rgba(255, 255, 255, 0.2) !important;
     }
 
     /* ===== TEXT INPUT ===== */
     .stTextInput input {
-        background: #0D110D !important;
-        border: 1px solid rgba(80, 180, 80, 0.25) !important;
-        color: #C8D8C8 !important;
-        font-family: 'Share Tech Mono', monospace !important;
-        border-radius: 0px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+        font-family: 'Space Mono', monospace !important;
+        border-radius: 8px !important;
     }
 
     /* ===== HEADINGS ===== */
     h1, h2, h3, h4 {
-        font-family: 'Bebas Neue', monospace !important;
-        color: #7FFF00 !important;
-        letter-spacing: 3px !important;
+        font-family: 'Syne', sans-serif !important;
+        color: #ffffff !important;
+        letter-spacing: 2px !important;
     }
 
     /* ===== DIVIDER ===== */
     hr {
-        border-color: rgba(80, 180, 80, 0.15) !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
     }
 
     /* ===== PROGRESS BAR ===== */
     [data-testid="stProgressBar"] > div > div {
-        background: linear-gradient(90deg, #4CAF50, #7FFF00) !important;
+        background: linear-gradient(90deg, #64FFC8, #00D4FF) !important;
+        border-radius: 4px !important;
     }
 
     /* ===== ALERTS ===== */
     [data-testid="stAlert"] {
-        border-radius: 0px !important;
-        font-family: 'Share Tech Mono', monospace !important;
-        font-size: 12px !important;
-        border-left: 3px solid #4CAF50 !important;
+        background: rgba(255, 255, 255, 0.06) !important;
+        backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 10px !important;
+        font-family: 'Space Mono', monospace !important;
+        font-size: 11px !important;
+        color: #ffffff !important;
     }
 
     /* ===== MAIN TITLE ===== */
     .main-title {
-        font-family: 'Bebas Neue', monospace !important;
-        font-size: 64px !important;
-        font-weight: 400 !important;
-        color: #7FFF00 !important;
-        letter-spacing: 18px !important;
-        text-shadow:
-            0 0 20px rgba(127, 255, 0, 0.6),
-            0 0 40px rgba(127, 255, 0, 0.2) !important;
-        animation: flicker 6s infinite !important;
-    }
-
-    @keyframes flicker {
-        0%, 92%, 100% { opacity: 1; }
-        93% { opacity: 0.7; }
-        95% { opacity: 1; }
-        98% { opacity: 0.8; }
+        font-family: 'Syne', sans-serif !important;
+        font-size: 62px !important;
+        font-weight: 800 !important;
+        background: linear-gradient(135deg, #64FFC8, #00D4FF, #a78bfa) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+        letter-spacing: 10px !important;
+        line-height: 1.1 !important;
     }
 
     .main-subtitle {
-        font-family: 'Share Tech Mono', monospace !important;
-        color: #2a4a2a !important;
-        font-size: 11px !important;
+        font-family: 'Space Mono', monospace !important;
+        color: rgba(255, 255, 255, 0.25) !important;
+        font-size: 10px !important;
         letter-spacing: 5px !important;
-        margin-top: 8px !important;
+        margin-top: 10px !important;
+    }
+
+    /* ===== GLASS PANELS ===== */
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.06) !important;
+        backdrop-filter: blur(20px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 16px !important;
+        padding: 20px !important;
+        margin: 12px 0 !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
     }
 
     /* ===== AGENT STEPS ===== */
     .agent-step {
         padding: 12px 16px;
-        margin: 5px 0;
+        margin: 6px 0;
         border-left: 3px solid;
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 12px;
+        font-family: 'Space Mono', monospace;
+        font-size: 11px;
+        border-radius: 0 8px 8px 0;
+        backdrop-filter: blur(10px);
     }
 
     .step-done {
-        border-color: #7FFF00;
-        background: rgba(127, 255, 0, 0.04);
-        color: #7FFF00;
+        border-color: #64FFC8;
+        background: rgba(100, 255, 200, 0.06);
+        color: #64FFC8;
     }
 
     .step-error {
-        border-color: #FF4444;
-        background: rgba(255, 68, 68, 0.04);
-        color: #FF4444;
+        border-color: #FF6B6B;
+        background: rgba(255, 107, 107, 0.06);
+        color: #FF6B6B;
     }
 
     /* ===== VERDICT BOXES ===== */
     .verdict-safe {
-        background: rgba(127, 255, 0, 0.04);
-        border-left: 3px solid #7FFF00;
+        background: rgba(100, 255, 200, 0.06);
+        border: 1px solid rgba(100, 255, 200, 0.2);
+        border-left: 3px solid #64FFC8;
         padding: 16px;
         margin: 10px 0;
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 12px;
-        color: #7FFF00;
+        font-family: 'Space Mono', monospace;
+        font-size: 11px;
+        color: #64FFC8;
         line-height: 1.8;
+        border-radius: 0 10px 10px 0;
+        backdrop-filter: blur(10px);
     }
 
     .verdict-warn {
-        background: rgba(255, 215, 0, 0.04);
-        border-left: 3px solid #FFD700;
+        background: rgba(255, 200, 60, 0.06);
+        border: 1px solid rgba(255, 200, 60, 0.2);
+        border-left: 3px solid #FFC83C;
         padding: 16px;
         margin: 10px 0;
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 12px;
-        color: #FFD700;
+        font-family: 'Space Mono', monospace;
+        font-size: 11px;
+        color: #FFC83C;
         line-height: 1.8;
+        border-radius: 0 10px 10px 0;
+        backdrop-filter: blur(10px);
     }
 
     .verdict-danger {
-        background: rgba(255, 68, 68, 0.05);
-        border-left: 3px solid #FF4444;
+        background: rgba(255, 107, 107, 0.07);
+        border: 1px solid rgba(255, 107, 107, 0.2);
+        border-left: 3px solid #FF6B6B;
         padding: 16px;
         margin: 10px 0;
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 12px;
-        color: #FF4444;
+        font-family: 'Space Mono', monospace;
+        font-size: 11px;
+        color: #FF6B6B;
         line-height: 1.8;
-        animation: danger-pulse 2s infinite;
+        border-radius: 0 10px 10px 0;
+        backdrop-filter: blur(10px);
+        animation: danger-glow 2s infinite;
     }
 
-    @keyframes danger-pulse {
-        0%, 100% { border-color: #FF4444; }
-        50% { border-color: #FF0000; box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.05); }
+    @keyframes danger-glow {
+        0%, 100% { box-shadow: 0 0 10px rgba(255, 107, 107, 0.1); }
+        50% { box-shadow: 0 0 20px rgba(255, 107, 107, 0.2); }
     }
 
     /* ===== WHATSAPP BUBBLE ===== */
     .whatsapp-bubble {
-        background: #111811;
-        border: 1px solid rgba(80, 180, 80, 0.2);
-        border-radius: 0 10px 10px 10px;
-        padding: 12px 16px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 4px 16px 16px 16px;
+        padding: 14px 18px;
         margin: 8px 0;
-        font-family: 'Share Tech Mono', monospace;
+        font-family: 'Space Mono', monospace;
         font-size: 12px;
-        color: #C8D8C8;
+        color: #ffffff;
         max-width: 80%;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     }
 
     /* ===== BULK ROW ===== */
     .bulk-result-row {
-        padding: 10px 0;
-        border-bottom: 1px solid rgba(80, 180, 80, 0.08);
-        font-family: 'Share Tech Mono', monospace;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        font-family: 'Space Mono', monospace;
         font-size: 11px;
     }
 
     /* ===== TOGGLE ===== */
     .stToggle p {
-        font-family: 'Share Tech Mono', monospace !important;
-        font-size: 11px !important;
-        color: #556655 !important;
+        font-family: 'Space Mono', monospace !important;
+        font-size: 10px !important;
+        color: rgba(255, 255, 255, 0.5) !important;
         letter-spacing: 1px !important;
     }
 
     /* ===== CAPTION ===== */
-    .stCaption {
-        color: #3a4a3a !important;
-        font-family: 'Share Tech Mono', monospace !important;
+    .stCaption, caption {
+        color: rgba(255, 255, 255, 0.35) !important;
+        font-family: 'Space Mono', monospace !important;
+        font-size: 10px !important;
     }
 
     /* ===== SCROLLBAR ===== */
-    ::-webkit-scrollbar { width: 3px; }
-    ::-webkit-scrollbar-track { background: #0B0F0B; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb {
-        background: #4CAF50;
-        box-shadow: 0 0 4px rgba(76, 175, 80, 0.5);
+        background: rgba(100, 255, 200, 0.3);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(100, 255, 200, 0.6);
     }
 </style>
 """
 st.markdown(css, unsafe_allow_html=True)
-
-
+# ===== HEADER =====
+st.markdown("""
+<div style='text-align:center; padding:40px 0 30px;
+border-bottom:1px solid rgba(255,255,255,0.08); margin-bottom:30px;'>
+    <div style='font-family:Space Mono,monospace; font-size:9px;
+    color:rgba(255,255,255,0.2); letter-spacing:6px; margin-bottom:14px;'>
+        ◈ AUTHORIZED ACCESS ONLY ◈
+    </div>
+    <div class='main-title'>SAFENET</div>
+    <div class='main-subtitle'>
+        AI CYBER SECURITY AGENT — GROQ + LLAMA 3
+    </div>
+    <div style='margin-top:16px; display:inline-block;
+    background:rgba(100,255,200,0.08); border:1px solid rgba(100,255,200,0.2);
+    padding:6px 20px; border-radius:20px; font-family:Space Mono,monospace;
+    font-size:9px; color:#64FFC8; letter-spacing:3px;'>
+        ● PROTECTION ACTIVE
+    </div>
+</div>
+""", unsafe_allow_html=True)
 # ===== STATS =====
 stats = get_stats()
 col1, col2, col3, col4 = st.columns(4)
