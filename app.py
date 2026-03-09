@@ -18,9 +18,7 @@ st.set_page_config(
 )
 
 # ===== CSS =====
-st.markdown("""
-<style>
-   st.markdown("""
+css = """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
 
@@ -288,9 +286,6 @@ st.markdown("""
         background: #FF6B00;
         box-shadow: 0 0 4px rgba(255,107,0,0.5);
     }
-</style>
-""", unsafe_allow_html=True)
-
 </style>
 """, unsafe_allow_html=True)
 
