@@ -190,11 +190,32 @@ css = """
     }
 
     /* ===== HEADINGS ===== */
-    h1, h2, h3, h4 {
-        font-family: 'Syne', sans-serif !important;
-        color: #ffffff !important;
-        letter-spacing: 2px !important;
-    }
+    /* ===== HEADINGS ===== */
+h1, h2, h3, h4 {
+    font-family: 'Syne', sans-serif !important;
+    color: #ffffff !important;
+    letter-spacing: 2px !important;
+}
+
+/* markdown headings — #### wale */
+.stMarkdown h4 {
+    color: #64FFC8 !important;
+    font-family: 'Syne', sans-serif !important;
+    font-size: 20px !important;
+    letter-spacing: 2px !important;
+}
+
+/* bold text */
+.stMarkdown strong {
+    color: #ffffff !important;
+}
+
+/* normal text */
+.stMarkdown p {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-family: 'Space Mono', monospace !important;
+    font-size: 12px !important;
+}
 
     /* ===== DIVIDER ===== */
     hr {
@@ -208,16 +229,26 @@ css = """
     }
 
     /* ===== ALERTS ===== */
-    [data-testid="stAlert"] {
-        background: rgba(255, 255, 255, 0.06) !important;
-        backdrop-filter: blur(10px) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 10px !important;
-        font-family: 'Space Mono', monospace !important;
-        font-size: 11px !important;
-        color: #ffffff !important;
-    }
+    /* ===== ALERTS ===== */
+[data-testid="stAlert"] {
+    background: rgba(100, 255, 200, 0.06) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(100, 255, 200, 0.15) !important;
+    border-left: 3px solid #64FFC8 !important;
+    border-radius: 10px !important;
+    font-family: 'Space Mono', monospace !important;
+    font-size: 11px !important;
+    color: #64FFC8 !important;
+}
 
+/* info box specifically */
+[data-testid="stAlert"] p {
+    color: #64FFC8 !important;
+    font-family: 'Space Mono', monospace !important;
+    font-size: 11px !important;
+    line-height: 1.8 !important;
+}
+    
     /* ===== MAIN TITLE ===== */
     .main-title {
         font-family: 'Syne', sans-serif !important;
@@ -874,8 +905,9 @@ with tab5:
 # ===== FOOTER =====
 st.divider()
 st.markdown("""
-<div style='text-align:center; color:#222; font-family:monospace; 
-font-size:10px; padding:20px; letter-spacing:3px;'>
+<div style='text-align:center; font-family:Space Mono,monospace; 
+font-size:10px; padding:20px; letter-spacing:3px;
+color:rgba(255,255,255,0.2);'>
     SAFENET v3.0 — AGENTIC AI CYBER SECURITY — 
     GROQ LLAMA 3 — IBM PBL PROJECT
 </div>
