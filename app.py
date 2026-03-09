@@ -20,236 +20,277 @@ st.set_page_config(
 # ===== CSS =====
 st.markdown("""
 <style>
+   st.markdown("""
+<style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
 
+    /* ===== BASE ===== */
     .stApp {
-        background-color: #0A0A0A;
-        color: #E8E8E8;
-        font-family: 'Rajdhani', sans-serif;
+        background-color: #0A0A0A !important;
+        color: #E8E8E8 !important;
+        font-family: 'Rajdhani', sans-serif !important;
     }
 
+    /* ===== SIDEBAR ===== */
     section[data-testid="stSidebar"] {
         background: #0D0D0D !important;
         border-right: 1px solid rgba(255,107,0,0.2) !important;
     }
 
+    /* ===== STATS CARDS FIX ===== */
     div[data-testid="metric-container"] {
-        background: #111111 !important;
-        border: 1px solid rgba(255,107,0,0.25) !important;
+        background: #161616 !important;
+        border: 1px solid rgba(255,107,0,0.3) !important;
         border-top: 2px solid #FF6B00 !important;
-        padding: 20px !important;
-        box-shadow: 0 0 20px rgba(255,107,0,0.05);
-        transition: all 0.3s ease;
+        padding: 16px !important;
+        border-radius: 0px !important;
     }
 
-    div[data-testid="metric-container"]:hover {
-        border-color: rgba(255,107,0,0.6) !important;
-        box-shadow: 0 0 30px rgba(255,107,0,0.15);
-        transform: translateY(-2px);
-    }
-
-    div[data-testid="metric-container"] label {
+    [data-testid="stMetricLabel"] p {
         font-family: 'Share Tech Mono', monospace !important;
-        font-size: 10px !important;
-        letter-spacing: 2px !important;
-        color: #666 !important;
+        font-size: 11px !important;
+        color: #888888 !important;
+        letter-spacing: 1px !important;
     }
 
-    div[data-testid="stMetricValue"] {
+    [data-testid="stMetricValue"] {
         font-family: 'Orbitron', monospace !important;
-        font-size: 36px !important;
-        font-weight: 900 !important;
         color: #FF6B00 !important;
-        text-shadow: 0 0 20px rgba(255,107,0,0.6) !important;
+        font-size: 32px !important;
+        font-weight: 900 !important;
+        text-shadow: 0 0 15px rgba(255,107,0,0.4) !important;
     }
 
+    /* ===== TABS ===== */
     .stTabs [data-baseweb="tab-list"] {
-        background: #0D0D0D;
-        border-bottom: 1px solid rgba(255,107,0,0.2);
+        background: #0D0D0D !important;
+        border-bottom: 1px solid rgba(255,107,0,0.2) !important;
+        gap: 0px !important;
     }
 
     .stTabs [data-baseweb="tab"] {
         font-family: 'Share Tech Mono', monospace !important;
-        font-size: 11px !important;
+        font-size: 10px !important;
         letter-spacing: 2px !important;
-        color: #444 !important;
+        color: #555555 !important;
         background: transparent !important;
+        border-radius: 0px !important;
+        padding: 12px 20px !important;
     }
 
     .stTabs [aria-selected="true"] {
         color: #FF6B00 !important;
+        background: rgba(255,107,0,0.06) !important;
         border-bottom: 2px solid #FF6B00 !important;
-        text-shadow: 0 0 10px rgba(255,107,0,0.5);
+        text-shadow: 0 0 8px rgba(255,107,0,0.4) !important;
     }
 
+    /* ===== BUTTONS FIX ===== */
     .stButton > button {
-        background: linear-gradient(135deg, #FF6B00, #CC5500) !important;
-        color: #000 !important;
+        background: transparent !important;
+        color: #FF6B00 !important;
         font-family: 'Orbitron', monospace !important;
         font-size: 11px !important;
         font-weight: 700 !important;
         letter-spacing: 3px !important;
-        border: none !important;
-        padding: 14px !important;
-        box-shadow: 0 4px 15px rgba(255,107,0,0.3) !important;
-        transition: all 0.2s !important;
+        border: 1px solid #FF6B00 !important;
+        padding: 12px 20px !important;
+        border-radius: 0px !important;
+        width: 100% !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 0 10px rgba(255,107,0,0.1) !important;
     }
 
     .stButton > button:hover {
-        background: linear-gradient(135deg, #FF8C00, #FF6B00) !important;
-        box-shadow: 0 6px 25px rgba(255,107,0,0.5) !important;
-        transform: translateY(-2px) !important;
+        background: #FF6B00 !important;
+        color: #000000 !important;
+        box-shadow: 0 0 20px rgba(255,107,0,0.4) !important;
+        transform: translateY(-1px) !important;
     }
 
+    /* ===== TEXT AREA ===== */
     .stTextArea textarea {
         background: #111111 !important;
-        border: 1px solid rgba(255,107,0,0.2) !important;
+        border: 1px solid rgba(255,107,0,0.25) !important;
         color: #E8E8E8 !important;
         font-family: 'Share Tech Mono', monospace !important;
         font-size: 13px !important;
-        border-radius: 0 !important;
+        border-radius: 0px !important;
+        line-height: 1.6 !important;
     }
 
     .stTextArea textarea:focus {
         border-color: #FF6B00 !important;
-        box-shadow: 0 0 15px rgba(255,107,0,0.1) !important;
+        box-shadow: 0 0 12px rgba(255,107,0,0.15) !important;
     }
 
-    .stProgress > div > div {
+    .stTextArea textarea::placeholder {
+        color: #333333 !important;
+    }
+
+    /* ===== TEXT INPUT ===== */
+    .stTextInput input {
+        background: #111111 !important;
+        border: 1px solid rgba(255,107,0,0.25) !important;
+        color: #E8E8E8 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        border-radius: 0px !important;
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    [data-testid="stProgressBar"] > div > div {
         background: linear-gradient(90deg, #FF6B00, #FF2D2D) !important;
     }
 
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: #0A0A0A; }
-    ::-webkit-scrollbar-thumb {
-        background: #FF6B00;
-        box-shadow: 0 0 6px rgba(255,107,0,0.5);
+    /* ===== ALERTS ===== */
+    [data-testid="stAlert"] {
+        border-radius: 0px !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 12px !important;
     }
 
+    /* ===== HEADINGS ===== */
+    h1, h2, h3, h4 {
+        font-family: 'Orbitron', monospace !important;
+        color: #FF6B00 !important;
+        letter-spacing: 2px !important;
+    }
+
+    /* ===== DIVIDER ===== */
+    hr {
+        border-color: rgba(255,107,0,0.15) !important;
+    }
+
+    /* ===== TOGGLE ===== */
+    .stToggle p {
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 11px !important;
+        color: #888 !important;
+        letter-spacing: 1px !important;
+    }
+
+    /* ===== CAPTION / SMALL TEXT ===== */
+    .stCaption, caption {
+        color: #666 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 11px !important;
+    }
+
+    /* ===== MAIN TITLE ===== */
     .main-title {
-        font-family: 'Orbitron', monospace;
-        font-size: 48px;
-        font-weight: 900;
-        color: #FF6B00;
-        letter-spacing: 12px;
-        text-shadow: 0 0 20px rgba(255,107,0,0.8), 0 0 40px rgba(255,107,0,0.4);
-        animation: flicker 4s infinite;
+        font-family: 'Orbitron', monospace !important;
+        font-size: 52px !important;
+        font-weight: 900 !important;
+        color: #FF6B00 !important;
+        letter-spacing: 14px !important;
+        text-shadow:
+            0 0 20px rgba(255,107,0,0.9),
+            0 0 50px rgba(255,107,0,0.4),
+            0 0 100px rgba(255,107,0,0.15) !important;
+        animation: flicker 5s infinite !important;
     }
 
     @keyframes flicker {
-        0%, 95%, 100% { opacity: 1; }
-        96% { opacity: 0.8; }
-        98% { opacity: 0.9; }
+        0%, 94%, 100% { opacity: 1; }
+        95% { opacity: 0.75; }
+        97% { opacity: 1; }
+        99% { opacity: 0.85; }
     }
 
     .main-subtitle {
-        font-family: 'Share Tech Mono', monospace;
-        color: #444;
-        font-size: 11px;
-        letter-spacing: 4px;
-        margin-top: 8px;
+        font-family: 'Share Tech Mono', monospace !important;
+        color: #3a3a3a !important;
+        font-size: 11px !important;
+        letter-spacing: 5px !important;
+        margin-top: 10px !important;
     }
 
+    /* ===== AGENT STEP BOXES ===== */
     .agent-step {
-        padding: 12px 16px;
-        margin: 6px 0;
-        border-left: 3px solid;
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 12px;
-        animation: slideIn 0.3s ease;
-    }
-
-    @keyframes slideIn {
-        from { opacity: 0; transform: translateX(-10px); }
-        to { opacity: 1; transform: translateX(0); }
+        padding: 12px 16px !important;
+        margin: 5px 0 !important;
+        border-left: 3px solid !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 12px !important;
     }
 
     .step-done {
-        border-color: #00FF88;
-        background: rgba(0,255,136,0.04);
-        color: #00FF88;
+        border-color: #00FF88 !important;
+        background: rgba(0,255,136,0.04) !important;
+        color: #00FF88 !important;
     }
 
     .step-error {
-        border-color: #FF2D2D;
-        background: rgba(255,45,45,0.04);
-        color: #FF2D2D;
+        border-color: #FF2D2D !important;
+        background: rgba(255,45,45,0.04) !important;
+        color: #FF2D2D !important;
     }
 
-    .breakdown-bar {
-        height: 6px;
-        border-radius: 0;
-        margin: 4px 0 10px 0;
-        transition: width 1s ease;
-    }
-
+    /* ===== VERDICT BOXES ===== */
     .verdict-safe {
-        background: rgba(0,255,136,0.04);
-        border-left: 3px solid #00FF88;
-        padding: 16px;
-        margin: 10px 0;
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 12px;
-        color: #00FF88;
-        line-height: 1.8;
+        background: rgba(0,255,136,0.04) !important;
+        border-left: 3px solid #00FF88 !important;
+        padding: 16px !important;
+        margin: 10px 0 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 12px !important;
+        color: #00FF88 !important;
+        line-height: 1.8 !important;
     }
 
     .verdict-warn {
-        background: rgba(255,215,0,0.04);
-        border-left: 3px solid #FFD700;
-        padding: 16px;
-        margin: 10px 0;
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 12px;
-        color: #FFD700;
-        line-height: 1.8;
+        background: rgba(255,215,0,0.04) !important;
+        border-left: 3px solid #FFD700 !important;
+        padding: 16px !important;
+        margin: 10px 0 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 12px !important;
+        color: #FFD700 !important;
+        line-height: 1.8 !important;
     }
 
     .verdict-danger {
-        background: rgba(255,45,45,0.05);
-        border-left: 3px solid #FF2D2D;
-        padding: 16px;
-        margin: 10px 0;
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 12px;
-        color: #FF2D2D;
-        line-height: 1.8;
-        animation: danger-pulse 1.5s infinite;
+        background: rgba(255,45,45,0.06) !important;
+        border-left: 3px solid #FF2D2D !important;
+        padding: 16px !important;
+        margin: 10px 0 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 12px !important;
+        color: #FF2D2D !important;
+        line-height: 1.8 !important;
     }
 
-    @keyframes danger-pulse {
-        0%, 100% { box-shadow: inset 0 0 20px rgba(255,45,45,0.03); }
-        50% { box-shadow: inset 0 0 30px rgba(255,45,45,0.08); }
-    }
-
+    /* ===== WHATSAPP BUBBLE ===== */
     .whatsapp-bubble {
-        background: #1a1a1a;
-        border: 1px solid rgba(37,211,102,0.3);
-        border-radius: 0 12px 12px 12px;
-        padding: 12px 16px;
-        margin: 8px 0;
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 12px;
-        color: #E8E8E8;
-        position: relative;
-        max-width: 85%;
+        background: #1a1a1a !important;
+        border: 1px solid rgba(37,211,102,0.25) !important;
+        border-radius: 0 12px 12px 12px !important;
+        padding: 12px 16px !important;
+        margin: 8px 0 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 12px !important;
+        color: #E8E8E8 !important;
+        max-width: 80% !important;
     }
 
-    .whatsapp-bubble::before {
-        content: '';
-        position: absolute;
-        top: 0; left: -8px;
-        border: 8px solid transparent;
-        border-right-color: #1a1a1a;
-        border-top: 0;
-    }
-
+    /* ===== BULK ROW ===== */
     .bulk-result-row {
-        padding: 10px 0;
-        border-bottom: 1px solid rgba(255,107,0,0.08);
-        font-family: 'Share Tech Mono', monospace;
-        font-size: 11px;
+        padding: 10px 0 !important;
+        border-bottom: 1px solid rgba(255,107,0,0.08) !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 11px !important;
     }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 3px; height: 3px; }
+    ::-webkit-scrollbar-track { background: #0A0A0A; }
+    ::-webkit-scrollbar-thumb {
+        background: #FF6B00;
+        box-shadow: 0 0 4px rgba(255,107,0,0.5);
+    }
+</style>
+""", unsafe_allow_html=True)
+
 </style>
 """, unsafe_allow_html=True)
 
