@@ -22,148 +22,378 @@ st.set_page_config(
 # ===== CUSTOM CSS =====
 st.markdown("""
 <style>
-    /* Main background */
+# ===== CUSTOM CSS =====
+st.markdown("""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+
+    /* ===== GLOBAL ===== */
     .stApp {
         background-color: #0A0A0A;
         color: #E8E8E8;
+        font-family: 'Rajdhani', sans-serif;
     }
-    
-    /* Sidebar */
-    .css-1d391kg {
-        background-color: #111111;
+
+    /* Scanline overlay */
+    .stApp::before {
+        content: '';
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0,0,0,0.03) 2px,
+            rgba(0,0,0,0.03) 4px
+        );
+        pointer-events: none;
+        z-index: 9999;
     }
-    
-    /* Cards */
-    .metric-card {
-        background: #111111;
-        border: 1px solid rgba(255,107,0,0.3);
-        padding: 20px;
-        border-radius: 4px;
-        text-align: center;
+
+    /* Grid background */
+    .stApp::after {
+        content: '';
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background-image:
+            linear-gradient(rgba(255,107,0,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,107,0,0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        pointer-events: none;
+        z-index: 0;
     }
-    
-    /* Risk badges */
-    .badge-safe {
-        background: rgba(0,255,136,0.1);
-        color: #00FF88;
-        border: 1px solid #00FF88;
-        padding: 4px 12px;
-        border-radius: 2px;
-        font-size: 12px;
-        font-weight: bold;
+
+    /* ===== SIDEBAR ===== */
+    section[data-testid="stSidebar"] {
+        background: #0D0D0D !important;
+        border-right: 1px solid rgba(255,107,0,0.2) !important;
     }
-    
-    .badge-warn {
-        background: rgba(255,215,0,0.1);
-        color: #FFD700;
-        border: 1px solid #FFD700;
-        padding: 4px 12px;
-        border-radius: 2px;
-        font-size: 12px;
-        font-weight: bold;
+
+    section[data-testid="stSidebar"]::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 2px;
+        background: linear-gradient(90deg, transparent, #FF6B00, transparent);
     }
-    
-    .badge-danger {
-        background: rgba(255,45,45,0.1);
-        color: #FF2D2D;
-        border: 1px solid #FF2D2D;
-        padding: 4px 12px;
-        border-radius: 2px;
-        font-size: 12px;
-        font-weight: bold;
+
+    section[data-testid="stSidebar"] .stMarkdown h3 {
+        font-family: 'Orbitron', monospace !important;
+        color: #FF6B00 !important;
+        font-size: 11px !important;
+        letter-spacing: 3px !important;
+        text-shadow: 0 0 10px rgba(255,107,0,0.5);
     }
-    
-    /* Buttons */
+
+    /* ===== METRICS / STATS CARDS ===== */
+    div[data-testid="metric-container"] {
+        background: #111111 !important;
+        border: 1px solid rgba(255,107,0,0.25) !important;
+        border-top: 2px solid #FF6B00 !important;
+        padding: 20px !important;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 0 20px rgba(255,107,0,0.05),
+                    inset 0 0 20px rgba(255,107,0,0.02);
+        transition: all 0.3s ease;
+    }
+
+    div[data-testid="metric-container"]:hover {
+        border-color: rgba(255,107,0,0.6) !important;
+        box-shadow: 0 0 30px rgba(255,107,0,0.15),
+                    inset 0 0 30px rgba(255,107,0,0.05);
+        transform: translateY(-2px);
+    }
+
+    div[data-testid="metric-container"] label {
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 10px !important;
+        letter-spacing: 2px !important;
+        color: #666 !important;
+        text-transform: uppercase;
+    }
+
+    div[data-testid="metric-container"] div[data-testid="stMetricValue"] {
+        font-family: 'Orbitron', monospace !important;
+        font-size: 36px !important;
+        font-weight: 900 !important;
+        color: #FF6B00 !important;
+        text-shadow: 0 0 20px rgba(255,107,0,0.6) !important;
+    }
+
+    /* ===== TABS ===== */
+    .stTabs [data-baseweb="tab-list"] {
+        background: #0D0D0D;
+        border-bottom: 1px solid rgba(255,107,0,0.2);
+        gap: 0;
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 11px !important;
+        letter-spacing: 2px !important;
+        color: #444 !important;
+        padding: 12px 24px !important;
+        border-right: 1px solid rgba(255,107,0,0.1) !important;
+        background: transparent !important;
+        transition: all 0.2s;
+    }
+
+    .stTabs [data-baseweb="tab"]:hover {
+        color: #FF6B00 !important;
+        background: rgba(255,107,0,0.05) !important;
+    }
+
+    .stTabs [aria-selected="true"] {
+        color: #FF6B00 !important;
+        background: rgba(255,107,0,0.08) !important;
+        border-bottom: 2px solid #FF6B00 !important;
+        text-shadow: 0 0 10px rgba(255,107,0,0.5);
+    }
+
+    /* ===== BUTTONS ===== */
     .stButton > button {
-        background: #FF6B00;
-        color: black;
-        font-weight: bold;
-        border: none;
-        width: 100%;
-        padding: 12px;
-        letter-spacing: 2px;
+        background: linear-gradient(135deg, #FF6B00, #CC5500) !important;
+        color: #000 !important;
+        font-family: 'Orbitron', monospace !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        letter-spacing: 3px !important;
+        border: none !important;
+        width: 100% !important;
+        padding: 14px !important;
+        clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+        transition: all 0.2s !important;
+        box-shadow: 0 4px 15px rgba(255,107,0,0.3) !important;
     }
-    
+
     .stButton > button:hover {
-        background: #FF8C00;
-        color: black;
+        background: linear-gradient(135deg, #FF8C00, #FF6B00) !important;
+        box-shadow: 0 6px 25px rgba(255,107,0,0.5) !important;
+        transform: translateY(-2px) !important;
     }
-    
-    /* Header */
+
+    /* ===== TEXT AREA ===== */
+    .stTextArea textarea {
+        background: #111111 !important;
+        border: 1px solid rgba(255,107,0,0.2) !important;
+        color: #E8E8E8 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 13px !important;
+        border-radius: 0 !important;
+        transition: border-color 0.2s !important;
+    }
+
+    .stTextArea textarea:focus {
+        border-color: #FF6B00 !important;
+        box-shadow: 0 0 15px rgba(255,107,0,0.1) !important;
+    }
+
+    /* ===== HEADER ===== */
     .main-header {
         text-align: center;
-        padding: 20px 0;
+        padding: 30px 0;
         border-bottom: 1px solid rgba(255,107,0,0.3);
         margin-bottom: 30px;
+        position: relative;
     }
-    
+
+    .main-header::before {
+        content: '';
+        position: absolute;
+        bottom: -1px; left: 50%;
+        transform: translateX(-50%);
+        width: 200px; height: 1px;
+        background: #FF6B00;
+        box-shadow: 0 0 20px #FF6B00;
+    }
+
     .main-title {
-        font-size: 42px;
+        font-family: 'Orbitron', monospace;
+        font-size: 48px;
         font-weight: 900;
         color: #FF6B00;
-        letter-spacing: 8px;
-        text-shadow: 0 0 30px rgba(255,107,0,0.5);
+        letter-spacing: 12px;
+        text-shadow:
+            0 0 20px rgba(255,107,0,0.8),
+            0 0 40px rgba(255,107,0,0.4),
+            0 0 80px rgba(255,107,0,0.2);
+        animation: flicker 4s infinite;
     }
-    
+
+    @keyframes flicker {
+        0%, 95%, 100% { opacity: 1; }
+        96% { opacity: 0.8; }
+        97% { opacity: 1; }
+        98% { opacity: 0.9; }
+    }
+
     .main-subtitle {
-        color: #666;
-        font-size: 12px;
-        letter-spacing: 3px;
-        margin-top: 5px;
+        font-family: 'Share Tech Mono', monospace;
+        color: #444;
+        font-size: 11px;
+        letter-spacing: 4px;
+        margin-top: 8px;
     }
-    
-    /* Risk meter */
+
+    /* ===== RISK DISPLAY ===== */
     .risk-display {
         text-align: center;
         padding: 30px;
-        background: #111111;
+        background: #0D0D0D;
         border: 1px solid rgba(255,107,0,0.2);
-        margin: 20px 0;
+        position: relative;
+        overflow: hidden;
     }
-    
+
+    .risk-display::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 1px;
+        background: linear-gradient(90deg, transparent, #FF6B00, transparent);
+    }
+
     .risk-score-big {
+        font-family: 'Orbitron', monospace;
         font-size: 72px;
         font-weight: 900;
         line-height: 1;
+        animation: glow-pulse 2s infinite;
     }
-    
-    /* Verdict box */
+
+    @keyframes glow-pulse {
+        0%, 100% { filter: brightness(1); }
+        50% { filter: brightness(1.3); }
+    }
+
+    /* ===== VERDICT BOXES ===== */
     .verdict-safe {
-        background: rgba(0,255,136,0.05);
+        background: rgba(0,255,136,0.04);
         border-left: 3px solid #00FF88;
-        padding: 15px;
+        border-bottom: 1px solid rgba(0,255,136,0.1);
+        padding: 16px;
         margin: 10px 0;
-        font-family: monospace;
-        font-size: 13px;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 12px;
         color: #00FF88;
+        line-height: 1.8;
+        box-shadow: inset 0 0 20px rgba(0,255,136,0.02);
     }
-    
+
     .verdict-warn {
-        background: rgba(255,215,0,0.05);
+        background: rgba(255,215,0,0.04);
         border-left: 3px solid #FFD700;
-        padding: 15px;
+        border-bottom: 1px solid rgba(255,215,0,0.1);
+        padding: 16px;
         margin: 10px 0;
-        font-family: monospace;
-        font-size: 13px;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 12px;
         color: #FFD700;
+        line-height: 1.8;
+        box-shadow: inset 0 0 20px rgba(255,215,0,0.02);
     }
-    
+
     .verdict-danger {
         background: rgba(255,45,45,0.05);
         border-left: 3px solid #FF2D2D;
-        padding: 15px;
+        border-bottom: 1px solid rgba(255,45,45,0.1);
+        padding: 16px;
         margin: 10px 0;
-        font-family: monospace;
-        font-size: 13px;
-        color: #FF2D2D;
-    }
-    
-    /* Log table */
-    .log-table {
-        font-family: monospace;
+        font-family: 'Share Tech Mono', monospace;
         font-size: 12px;
-        width: 100%;
+        color: #FF2D2D;
+        line-height: 1.8;
+        box-shadow: inset 0 0 20px rgba(255,45,45,0.03);
+        animation: danger-pulse 1.5s infinite;
     }
+
+    @keyframes danger-pulse {
+        0%, 100% { box-shadow: inset 0 0 20px rgba(255,45,45,0.03); }
+        50% { box-shadow: inset 0 0 30px rgba(255,45,45,0.08); }
+    }
+
+    /* ===== DIVIDER ===== */
+    hr {
+        border-color: rgba(255,107,0,0.15) !important;
+    }
+
+    /* ===== SUCCESS / ERROR / WARNING ===== */
+    .stSuccess {
+        background: rgba(0,255,136,0.05) !important;
+        border: 1px solid rgba(0,255,136,0.3) !important;
+        color: #00FF88 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        border-radius: 0 !important;
+    }
+
+    .stError {
+        background: rgba(255,45,45,0.05) !important;
+        border: 1px solid rgba(255,45,45,0.3) !important;
+        border-radius: 0 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+    }
+
+    .stWarning {
+        background: rgba(255,215,0,0.05) !important;
+        border: 1px solid rgba(255,215,0,0.3) !important;
+        border-radius: 0 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+    }
+
+    .stInfo {
+        background: rgba(255,107,0,0.05) !important;
+        border: 1px solid rgba(255,107,0,0.2) !important;
+        border-radius: 0 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        color: #FF6B00 !important;
+    }
+
+    /* ===== TOGGLE ===== */
+    .stToggle label {
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 11px !important;
+        letter-spacing: 1px !important;
+        color: #666 !important;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer-text {
+        text-align: center;
+        color: #222;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 10px;
+        padding: 20px;
+        letter-spacing: 3px;
+        border-top: 1px solid rgba(255,107,0,0.1);
+    }
+
+    /* ===== SPINNER ===== */
+    .stSpinner > div {
+        border-top-color: #FF6B00 !important;
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    .stProgress > div > div {
+        background: linear-gradient(90deg, #FF6B00, #FF2D2D) !important;
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+
+    ::-webkit-scrollbar-track { background: #0A0A0A; }
+
+    ::-webkit-scrollbar-thumb {
+        background: #FF6B00;
+        box-shadow: 0 0 6px rgba(255,107,0,0.5);
+    }
+</style>
+""", unsafe_allow_html=True)
 </style>
 """, unsafe_allow_html=True)
 
