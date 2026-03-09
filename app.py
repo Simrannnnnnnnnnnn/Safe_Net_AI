@@ -20,124 +20,140 @@ st.set_page_config(
 # ===== CSS =====
 css = """
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&family=Bebas+Neue&display=swap');
 
     /* ===== BASE ===== */
     .stApp {
-        background-color: #0A0A0A !important;
-        color: #E8E8E8 !important;
+        background-color: #0B0F0B !important;
+        color: #C8D8C8 !important;
         font-family: 'Rajdhani', sans-serif !important;
     }
 
     /* ===== SIDEBAR ===== */
     section[data-testid="stSidebar"] {
-        background: #0D0D0D !important;
-        border-right: 1px solid rgba(255,107,0,0.2) !important;
+        background: #0D110D !important;
+        border-right: 1px solid rgba(80, 180, 80, 0.2) !important;
     }
 
-    /* ===== STATS CARDS FIX ===== */
+    section[data-testid="stSidebar"] p {
+        color: #C8D8C8 !important;
+        font-family: 'Share Tech Mono', monospace !important;
+        font-size: 11px !important;
+    }
+
+    /* ===== STATS CARDS ===== */
     div[data-testid="metric-container"] {
-        background: #161616 !important;
-        border: 1px solid rgba(255,107,0,0.3) !important;
-        border-top: 2px solid #FF6B00 !important;
+        background: #111811 !important;
+        border: 1px solid rgba(80, 180, 80, 0.25) !important;
+        border-left: 3px solid #4CAF50 !important;
         padding: 16px !important;
         border-radius: 0px !important;
     }
 
     [data-testid="stMetricLabel"] p {
         font-family: 'Share Tech Mono', monospace !important;
-        font-size: 11px !important;
-        color: #888888 !important;
-        letter-spacing: 1px !important;
+        font-size: 10px !important;
+        color: #556655 !important;
+        letter-spacing: 2px !important;
+        text-transform: uppercase !important;
     }
 
     [data-testid="stMetricValue"] {
-        font-family: 'Orbitron', monospace !important;
-        color: #FF6B00 !important;
-        font-size: 32px !important;
-        font-weight: 900 !important;
-        text-shadow: 0 0 15px rgba(255,107,0,0.4) !important;
+        font-family: 'Bebas Neue', monospace !important;
+        color: #7FFF00 !important;
+        font-size: 36px !important;
+        font-weight: 400 !important;
+        text-shadow: 0 0 10px rgba(127, 255, 0, 0.3) !important;
     }
 
     /* ===== TABS ===== */
     .stTabs [data-baseweb="tab-list"] {
-        background: #0D0D0D !important;
-        border-bottom: 1px solid rgba(255,107,0,0.2) !important;
-        gap: 0px !important;
+        background: #0D110D !important;
+        border-bottom: 1px solid rgba(80, 180, 80, 0.2) !important;
     }
 
     .stTabs [data-baseweb="tab"] {
         font-family: 'Share Tech Mono', monospace !important;
         font-size: 10px !important;
         letter-spacing: 2px !important;
-        color: #555555 !important;
+        color: #3a4a3a !important;
         background: transparent !important;
         border-radius: 0px !important;
         padding: 12px 20px !important;
     }
 
     .stTabs [aria-selected="true"] {
-        color: #FF6B00 !important;
-        background: rgba(255,107,0,0.06) !important;
-        border-bottom: 2px solid #FF6B00 !important;
-        text-shadow: 0 0 8px rgba(255,107,0,0.4) !important;
+        color: #7FFF00 !important;
+        background: rgba(127, 255, 0, 0.05) !important;
+        border-bottom: 2px solid #7FFF00 !important;
+        text-shadow: 0 0 8px rgba(127, 255, 0, 0.4) !important;
     }
 
-    /* ===== BUTTONS FIX ===== */
+    /* ===== BUTTONS ===== */
     .stButton > button {
         background: transparent !important;
-        color: #FF6B00 !important;
-        font-family: 'Orbitron', monospace !important;
+        color: #7FFF00 !important;
+        font-family: 'Share Tech Mono', monospace !important;
         font-size: 11px !important;
         font-weight: 700 !important;
         letter-spacing: 3px !important;
-        border: 1px solid #FF6B00 !important;
+        border: 1px solid #4CAF50 !important;
         padding: 12px 20px !important;
         border-radius: 0px !important;
         width: 100% !important;
         transition: all 0.2s ease !important;
-        box-shadow: 0 0 10px rgba(255,107,0,0.1) !important;
+        text-transform: uppercase !important;
     }
 
     .stButton > button:hover {
-        background: #FF6B00 !important;
+        background: #4CAF50 !important;
         color: #000000 !important;
-        box-shadow: 0 0 20px rgba(255,107,0,0.4) !important;
-        transform: translateY(-1px) !important;
+        box-shadow: 0 0 20px rgba(76, 175, 80, 0.3) !important;
     }
 
     /* ===== TEXT AREA ===== */
     .stTextArea textarea {
-        background: #111111 !important;
-        border: 1px solid rgba(255,107,0,0.25) !important;
-        color: #E8E8E8 !important;
+        background: #0D110D !important;
+        border: 1px solid rgba(80, 180, 80, 0.25) !important;
+        color: #C8D8C8 !important;
         font-family: 'Share Tech Mono', monospace !important;
         font-size: 13px !important;
         border-radius: 0px !important;
-        line-height: 1.6 !important;
     }
 
     .stTextArea textarea:focus {
-        border-color: #FF6B00 !important;
-        box-shadow: 0 0 12px rgba(255,107,0,0.15) !important;
+        border-color: #7FFF00 !important;
+        box-shadow: 0 0 10px rgba(127, 255, 0, 0.1) !important;
     }
 
     .stTextArea textarea::placeholder {
-        color: #333333 !important;
+        color: #2a3a2a !important;
     }
 
     /* ===== TEXT INPUT ===== */
     .stTextInput input {
-        background: #111111 !important;
-        border: 1px solid rgba(255,107,0,0.25) !important;
-        color: #E8E8E8 !important;
+        background: #0D110D !important;
+        border: 1px solid rgba(80, 180, 80, 0.25) !important;
+        color: #C8D8C8 !important;
         font-family: 'Share Tech Mono', monospace !important;
         border-radius: 0px !important;
     }
 
+    /* ===== HEADINGS ===== */
+    h1, h2, h3, h4 {
+        font-family: 'Bebas Neue', monospace !important;
+        color: #7FFF00 !important;
+        letter-spacing: 3px !important;
+    }
+
+    /* ===== DIVIDER ===== */
+    hr {
+        border-color: rgba(80, 180, 80, 0.15) !important;
+    }
+
     /* ===== PROGRESS BAR ===== */
     [data-testid="stProgressBar"] > div > div {
-        background: linear-gradient(90deg, #FF6B00, #FF2D2D) !important;
+        background: linear-gradient(90deg, #4CAF50, #7FFF00) !important;
     }
 
     /* ===== ALERTS ===== */
@@ -145,162 +161,143 @@ css = """
         border-radius: 0px !important;
         font-family: 'Share Tech Mono', monospace !important;
         font-size: 12px !important;
+        border-left: 3px solid #4CAF50 !important;
     }
 
-    /* ===== HEADINGS ===== */
-    h1, h2, h3, h4 {
-        font-family: 'Orbitron', monospace !important;
-        color: #FF6B00 !important;
-        letter-spacing: 2px !important;
+    /* ===== MAIN TITLE ===== */
+    .main-title {
+        font-family: 'Bebas Neue', monospace !important;
+        font-size: 64px !important;
+        font-weight: 400 !important;
+        color: #7FFF00 !important;
+        letter-spacing: 18px !important;
+        text-shadow:
+            0 0 20px rgba(127, 255, 0, 0.6),
+            0 0 40px rgba(127, 255, 0, 0.2) !important;
+        animation: flicker 6s infinite !important;
     }
 
-    /* ===== DIVIDER ===== */
-    hr {
-        border-color: rgba(255,107,0,0.15) !important;
+    @keyframes flicker {
+        0%, 92%, 100% { opacity: 1; }
+        93% { opacity: 0.7; }
+        95% { opacity: 1; }
+        98% { opacity: 0.8; }
+    }
+
+    .main-subtitle {
+        font-family: 'Share Tech Mono', monospace !important;
+        color: #2a4a2a !important;
+        font-size: 11px !important;
+        letter-spacing: 5px !important;
+        margin-top: 8px !important;
+    }
+
+    /* ===== AGENT STEPS ===== */
+    .agent-step {
+        padding: 12px 16px;
+        margin: 5px 0;
+        border-left: 3px solid;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 12px;
+    }
+
+    .step-done {
+        border-color: #7FFF00;
+        background: rgba(127, 255, 0, 0.04);
+        color: #7FFF00;
+    }
+
+    .step-error {
+        border-color: #FF4444;
+        background: rgba(255, 68, 68, 0.04);
+        color: #FF4444;
+    }
+
+    /* ===== VERDICT BOXES ===== */
+    .verdict-safe {
+        background: rgba(127, 255, 0, 0.04);
+        border-left: 3px solid #7FFF00;
+        padding: 16px;
+        margin: 10px 0;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 12px;
+        color: #7FFF00;
+        line-height: 1.8;
+    }
+
+    .verdict-warn {
+        background: rgba(255, 215, 0, 0.04);
+        border-left: 3px solid #FFD700;
+        padding: 16px;
+        margin: 10px 0;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 12px;
+        color: #FFD700;
+        line-height: 1.8;
+    }
+
+    .verdict-danger {
+        background: rgba(255, 68, 68, 0.05);
+        border-left: 3px solid #FF4444;
+        padding: 16px;
+        margin: 10px 0;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 12px;
+        color: #FF4444;
+        line-height: 1.8;
+        animation: danger-pulse 2s infinite;
+    }
+
+    @keyframes danger-pulse {
+        0%, 100% { border-color: #FF4444; }
+        50% { border-color: #FF0000; box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.05); }
+    }
+
+    /* ===== WHATSAPP BUBBLE ===== */
+    .whatsapp-bubble {
+        background: #111811;
+        border: 1px solid rgba(80, 180, 80, 0.2);
+        border-radius: 0 10px 10px 10px;
+        padding: 12px 16px;
+        margin: 8px 0;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 12px;
+        color: #C8D8C8;
+        max-width: 80%;
+    }
+
+    /* ===== BULK ROW ===== */
+    .bulk-result-row {
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(80, 180, 80, 0.08);
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 11px;
     }
 
     /* ===== TOGGLE ===== */
     .stToggle p {
         font-family: 'Share Tech Mono', monospace !important;
         font-size: 11px !important;
-        color: #888 !important;
+        color: #556655 !important;
         letter-spacing: 1px !important;
     }
 
-    /* ===== CAPTION / SMALL TEXT ===== */
-    .stCaption, caption {
-        color: #666 !important;
+    /* ===== CAPTION ===== */
+    .stCaption {
+        color: #3a4a3a !important;
         font-family: 'Share Tech Mono', monospace !important;
-        font-size: 11px !important;
-    }
-
-    /* ===== MAIN TITLE ===== */
-    .main-title {
-        font-family: 'Orbitron', monospace !important;
-        font-size: 52px !important;
-        font-weight: 900 !important;
-        color: #FF6B00 !important;
-        letter-spacing: 14px !important;
-        text-shadow:
-            0 0 20px rgba(255,107,0,0.9),
-            0 0 50px rgba(255,107,0,0.4),
-            0 0 100px rgba(255,107,0,0.15) !important;
-        animation: flicker 5s infinite !important;
-    }
-
-    @keyframes flicker {
-        0%, 94%, 100% { opacity: 1; }
-        95% { opacity: 0.75; }
-        97% { opacity: 1; }
-        99% { opacity: 0.85; }
-    }
-
-    .main-subtitle {
-        font-family: 'Share Tech Mono', monospace !important;
-        color: #3a3a3a !important;
-        font-size: 11px !important;
-        letter-spacing: 5px !important;
-        margin-top: 10px !important;
-    }
-
-    /* ===== AGENT STEP BOXES ===== */
-    .agent-step {
-        padding: 12px 16px !important;
-        margin: 5px 0 !important;
-        border-left: 3px solid !important;
-        font-family: 'Share Tech Mono', monospace !important;
-        font-size: 12px !important;
-    }
-
-    .step-done {
-        border-color: #00FF88 !important;
-        background: rgba(0,255,136,0.04) !important;
-        color: #00FF88 !important;
-    }
-
-    .step-error {
-        border-color: #FF2D2D !important;
-        background: rgba(255,45,45,0.04) !important;
-        color: #FF2D2D !important;
-    }
-
-    /* ===== VERDICT BOXES ===== */
-    .verdict-safe {
-        background: rgba(0,255,136,0.04) !important;
-        border-left: 3px solid #00FF88 !important;
-        padding: 16px !important;
-        margin: 10px 0 !important;
-        font-family: 'Share Tech Mono', monospace !important;
-        font-size: 12px !important;
-        color: #00FF88 !important;
-        line-height: 1.8 !important;
-    }
-
-    .verdict-warn {
-        background: rgba(255,215,0,0.04) !important;
-        border-left: 3px solid #FFD700 !important;
-        padding: 16px !important;
-        margin: 10px 0 !important;
-        font-family: 'Share Tech Mono', monospace !important;
-        font-size: 12px !important;
-        color: #FFD700 !important;
-        line-height: 1.8 !important;
-    }
-
-    .verdict-danger {
-        background: rgba(255,45,45,0.06) !important;
-        border-left: 3px solid #FF2D2D !important;
-        padding: 16px !important;
-        margin: 10px 0 !important;
-        font-family: 'Share Tech Mono', monospace !important;
-        font-size: 12px !important;
-        color: #FF2D2D !important;
-        line-height: 1.8 !important;
-    }
-
-    /* ===== WHATSAPP BUBBLE ===== */
-    .whatsapp-bubble {
-        background: #1a1a1a !important;
-        border: 1px solid rgba(37,211,102,0.25) !important;
-        border-radius: 0 12px 12px 12px !important;
-        padding: 12px 16px !important;
-        margin: 8px 0 !important;
-        font-family: 'Share Tech Mono', monospace !important;
-        font-size: 12px !important;
-        color: #E8E8E8 !important;
-        max-width: 80% !important;
-    }
-
-    /* ===== BULK ROW ===== */
-    .bulk-result-row {
-        padding: 10px 0 !important;
-        border-bottom: 1px solid rgba(255,107,0,0.08) !important;
-        font-family: 'Share Tech Mono', monospace !important;
-        font-size: 11px !important;
     }
 
     /* ===== SCROLLBAR ===== */
-    ::-webkit-scrollbar { width: 3px; height: 3px; }
-    ::-webkit-scrollbar-track { background: #0A0A0A; }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: #0B0F0B; }
     ::-webkit-scrollbar-thumb {
-        background: #FF6B00;
-        box-shadow: 0 0 4px rgba(255,107,0,0.5);
+        background: #4CAF50;
+        box-shadow: 0 0 4px rgba(76, 175, 80, 0.5);
     }
 </style>
 """
 st.markdown(css, unsafe_allow_html=True)
-
-
-# ===== HEADER =====
-st.markdown("""
-<div style='text-align:center; padding:30px 0; 
-border-bottom:1px solid rgba(255,107,0,0.3); margin-bottom:30px;'>
-    <div class='main-title'>🛡️ SAFENET</div>
-    <div class='main-subtitle'>
-        AI CYBER SECURITY AGENT — POWERED BY GROQ + LLAMA 3
-    </div>
-</div>
-""", unsafe_allow_html=True)
 
 
 # ===== STATS =====
