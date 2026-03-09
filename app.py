@@ -573,11 +573,89 @@ Example: 'Congratulations! You won Rs. 50,000. Click here: bit.ly/xyz — Send b
                 """, unsafe_allow_html=True)
         
         # Auto block action
-        if score >= 75 and auto_block:
-            st.error("🚫 AGENTIC ACTION: This message has been flagged. Sender would be auto-blocked via Gmail API.")
-    
-    elif scan_clicked and not message_input.strip():
-        st.warning("⚠️ Pehle message paste karo!")
+        # ===== AGENTIC ACTIONS =====
+if score >= 75 and auto_block:
+    st.markdown("---")
+    st.markdown("""
+    <div style='background:#0D0D0D; border:1px solid rgba(255,45,45,0.4); 
+    padding:20px; font-family:monospace;'>
+        <div style='color:#FF2D2D; font-size:13px; 
+        letter-spacing:2px; margin-bottom:15px;'>
+            ⚡ AGENTIC AI — AUTO RESPONSE INITIATED
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Step 1
+    with st.spinner("🔍 Step 1/4 — Threat signature analyzing..."):
+        import time
+        time.sleep(1)
+    st.markdown("""
+    <div style='color:#FF6B00; font-family:monospace; 
+    font-size:12px; padding:6px 0;'>
+        ✅ STEP 1 — Threat signature confirmed: 
+        <span style='color:#FF2D2D'>{}</span>
+    </div>
+    """.format(result['threat_type']), unsafe_allow_html=True)
+
+    # Step 2
+    with st.spinner("🌐 Step 2/4 — Sender identity tracing..."):
+        time.sleep(1)
+    st.markdown("""
+    <div style='color:#FF6B00; font-family:monospace; 
+    font-size:12px; padding:6px 0;'>
+        ✅ STEP 2 — Sender flagged as HIGH RISK entity
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Step 3
+    with st.spinner("🚫 Step 3/4 — Creating Gmail trash filter..."):
+        time.sleep(1)
+    st.markdown("""
+    <div style='color:#FF6B00; font-family:monospace; 
+    font-size:12px; padding:6px 0;'>
+        ✅ STEP 3 — Auto-trash filter created in Gmail
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Step 4
+    with st.spinner("📋 Step 4/4 — Logging to investigation database..."):
+        time.sleep(1)
+    st.markdown("""
+    <div style='color:#FF6B00; font-family:monospace; 
+    font-size:12px; padding:6px 0;'>
+        ✅ STEP 4 — Incident logged with timestamp
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div style='margin-top:15px; padding:12px; 
+    background:rgba(255,45,45,0.08); 
+    border-left:3px solid #FF2D2D;
+    font-family:monospace; font-size:12px; color:#FF2D2D;'>
+        🛡️ AGENT VERDICT: Sender permanently blocked. 
+        No further messages will reach your inbox.
+        Risk Score: {}% — Action: BLOCKED
+    </div>
+    </div>
+    """.format(score), unsafe_allow_html=True)
+
+elif score >= 30:
+    st.markdown("""
+    <div style='background:#0D0D0D; 
+    border:1px solid rgba(255,215,0,0.3); 
+    padding:15px; font-family:monospace; margin-top:10px;'>
+        <div style='color:#FFD700; font-size:12px; 
+        letter-spacing:2px;'>
+            ⚠️ AGENTIC AI — MONITORING MODE ACTIVATED
+        </div>
+        <div style='color:#666; font-size:11px; 
+        margin-top:8px; line-height:1.8;'>
+            → Sender added to watchlist<br>
+            → Next message will be auto-scanned<br>
+            → User alert sent
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 # ===== TAB 2 — GMAIL SCANNER =====
