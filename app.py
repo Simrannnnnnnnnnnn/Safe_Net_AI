@@ -287,7 +287,8 @@ css = """
         box-shadow: 0 0 4px rgba(255,107,0,0.5);
     }
 </style>
-""", unsafe_allow_html=True)
+"""
+st.markdown(css, unsafe_allow_html=True)
 
 
 # ===== HEADER =====
