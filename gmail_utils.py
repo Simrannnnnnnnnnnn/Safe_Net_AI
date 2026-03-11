@@ -39,38 +39,45 @@ def get_client_config():
 
 # ===== AUTH =====
 def get_auth_url():
+    import hashlib, secrets as sec, base64 as b64
+
     config       = get_client_config()
     redirect_uri = get_secret("GMAIL_REDIRECT_URI", "https://safenet-ai.streamlit.app")
 
-    flow = Flow.from_client_config(config, scopes=SCOPES, redirect_uri=redirect_uri)
-    auth_url, state = flow.authorization_url(
-        access_type='offline',
-        prompt='consent',
-        include_granted_scopes='false'
-    )
-    # Save entire flow object so code_verifier is preserved
-    st.session_state['oauth_state']    = state
+    # Generate PKCE code_verifier + code_challenge
+    code_verifier  = sec.token_urlsafe(64)
+    digest         = hashlib.sha256(code_verifier.encode()).digest()
+    code_challenge = b64.urlsafe_b64encode(digest).rstrip(b'=').decode()
+
+    # Save verifier for token exchange
+    st.session_state['code_verifier']  = code_verifier
     st.session_state['oauth_redirect'] = redirect_uri
     st.session_state['oauth_config']   = config
-    # Store serializable flow state
-    st.session_state['flow_token_uri']     = flow.client_config.get('token_uri', 'https://oauth2.googleapis.com/token')
+
+    # Build auth URL manually
+    import urllib.parse
+    params = {
+        'client_id':             config['web']['client_id'],
+        'redirect_uri':          redirect_uri,
+        'response_type':         'code',
+        'scope':                 ' '.join(SCOPES),
+        'access_type':           'offline',
+        'prompt':                'consent',
+        'code_challenge':        code_challenge,
+        'code_challenge_method': 'S256',
+    }
+    auth_url = 'https://accounts.google.com/o/oauth2/v2/auth?' + urllib.parse.urlencode(params)
     return auth_url
 
 
 def get_credentials_from_code(code):
     try:
-        config       = st.session_state.get('oauth_config') or get_client_config()
-        redirect_uri = st.session_state.get('oauth_redirect') or get_secret("GMAIL_REDIRECT_URI", "https://safenet-ai.streamlit.app")
-
-        # Recreate flow fresh — no PKCE, standard auth code flow
-        flow = Flow.from_client_config(
-            config,
-            scopes=SCOPES,
-            redirect_uri=redirect_uri
-        )
-
-        # Use requests directly to exchange code — avoids PKCE issue
         import requests as req
+
+        config        = st.session_state.get('oauth_config') or get_client_config()
+        redirect_uri  = st.session_state.get('oauth_redirect') or get_secret("GMAIL_REDIRECT_URI", "https://safenet-ai.streamlit.app")
+        code_verifier = st.session_state.get('code_verifier', '')
+
         client_id     = config['web']['client_id']
         client_secret = config['web']['client_secret']
 
@@ -82,6 +89,7 @@ def get_credentials_from_code(code):
                 'client_secret': client_secret,
                 'redirect_uri':  redirect_uri,
                 'grant_type':    'authorization_code',
+                'code_verifier': code_verifier,
             }
         )
         token_data = token_response.json()
