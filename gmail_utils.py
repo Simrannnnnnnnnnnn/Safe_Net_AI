@@ -39,23 +39,23 @@ def get_client_config():
 
 # ===== AUTH =====
 def get_auth_url():
-    import hashlib, secrets as sec, base64 as b64
+    import hashlib, secrets as sec, base64 as b64, urllib.parse
 
     config       = get_client_config()
     redirect_uri = get_secret("GMAIL_REDIRECT_URI", "https://safenet-ai.streamlit.app")
 
-    # Generate PKCE code_verifier + code_challenge
+    # Generate PKCE
     code_verifier  = sec.token_urlsafe(64)
     digest         = hashlib.sha256(code_verifier.encode()).digest()
     code_challenge = b64.urlsafe_b64encode(digest).rstrip(b'=').decode()
 
-    # Save verifier for token exchange
+    # Encode verifier in state so it survives redirect
+    state = b64.urlsafe_b64encode(code_verifier.encode()).decode()
+
     st.session_state['code_verifier']  = code_verifier
     st.session_state['oauth_redirect'] = redirect_uri
-    st.session_state['oauth_config']   = config
+    st.session_state['oauth_config']   = get_client_config()
 
-    # Build auth URL manually
-    import urllib.parse
     params = {
         'client_id':             config['web']['client_id'],
         'redirect_uri':          redirect_uri,
@@ -65,21 +65,35 @@ def get_auth_url():
         'prompt':                'consent',
         'code_challenge':        code_challenge,
         'code_challenge_method': 'S256',
+        'state':                 state,
     }
-    auth_url = 'https://accounts.google.com/o/oauth2/v2/auth?' + urllib.parse.urlencode(params)
-    return auth_url
+    return 'https://accounts.google.com/o/oauth2/v2/auth?' + urllib.parse.urlencode(params)
 
 
 def get_credentials_from_code(code):
     try:
-        import requests as req
+        import requests as req, base64 as b64, urllib.parse
 
-        config        = st.session_state.get('oauth_config') or get_client_config()
-        redirect_uri  = st.session_state.get('oauth_redirect') or get_secret("GMAIL_REDIRECT_URI", "https://safenet-ai.streamlit.app")
+        config       = get_client_config()
+        redirect_uri = get_secret("GMAIL_REDIRECT_URI", "https://safenet-ai.streamlit.app")
+        client_id    = config['web']['client_id']
+        client_secret= config['web']['client_secret']
+
+        # Try session_state first, then fallback to state param from URL
         code_verifier = st.session_state.get('code_verifier', '')
 
-        client_id     = config['web']['client_id']
-        client_secret = config['web']['client_secret']
+        if not code_verifier:
+            # Recover from state param in URL
+            state = st.query_params.get('state', '')
+            if state:
+                try:
+                    # Add padding if needed
+                    pad = 4 - len(state) % 4
+                    if pad != 4:
+                        state += '=' * pad
+                    code_verifier = b64.urlsafe_b64decode(state.encode()).decode()
+                except Exception:
+                    code_verifier = ''
 
         token_response = req.post(
             'https://oauth2.googleapis.com/token',
