@@ -2,10 +2,38 @@ import os
 import re
 import json
 import time
+import traceback
 from groq import Groq
 from database import save_log
 
-client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+# ===== CLIENTS SETUP =====
+groq_client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+
+# IBM Watson NLU (will be used if credentials are set)
+watson_available = False
+try:
+    from ibm_watson import NaturalLanguageUnderstandingV1
+    from ibm_watson.natural_language_understanding_v1 import Features, SentimentOptions, KeywordsOptions, CategoriesOptions, EmotionOptions
+    from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+
+    watson_api_key = os.environ.get("IBM_WATSON_API_KEY")
+    watson_url = os.environ.get("IBM_WATSON_URL")
+
+    if watson_api_key and watson_url:
+        authenticator = IAMAuthenticator(watson_api_key)
+        nlu = NaturalLanguageUnderstandingV1(
+            version='2022-04-07',
+            authenticator=authenticator
+        )
+        nlu.set_service_url(watson_url)
+        watson_available = True
+        print("✅ IBM Watson NLU connected successfully")
+    else:
+        print("⚠️ IBM Watson keys not found — running without Watson")
+except Exception as e:
+    print(f"⚠️ IBM Watson not available: {str(e)}")
+    watson_available = False
+
 
 # ===== LINK EXTRACTOR =====
 def extract_links(text):
@@ -44,6 +72,66 @@ def check_sender_reputation(sender_text):
         flags.append("Multiple hyphens in domain")
 
     return min(score, 100), flags
+
+
+# ===== IBM WATSON ANALYSIS =====
+def watson_analyze(message_text):
+    """Uses IBM Watson NLU to analyze sentiment, keywords and emotions"""
+    if not watson_available:
+        return None
+
+    try:
+        response = nlu.analyze(
+            text=message_text,
+            features=Features(
+                sentiment=SentimentOptions(),
+                keywords=KeywordsOptions(sentiment=True, limit=10),
+                emotion=EmotionOptions(),
+                categories=CategoriesOptions(limit=3)
+            )
+        ).get_result()
+
+        # Extract useful info
+        sentiment = response.get('sentiment', {}).get('document', {})
+        emotion = response.get('emotion', {}).get('document', {}).get('emotion', {})
+        keywords = response.get('keywords', [])
+        categories = response.get('categories', [])
+
+        # Build risk signals from Watson data
+        watson_risk = 0
+        watson_flags = []
+
+        # Negative sentiment = suspicious
+        sentiment_score = sentiment.get('score', 0)
+        if sentiment_score < -0.3:
+            watson_risk += 15
+            watson_flags.append(f"Negative sentiment detected ({sentiment_score:.2f})")
+
+        # High fear/disgust emotions = suspicious
+        fear_score = emotion.get('fear', 0)
+        if fear_score > 0.5:
+            watson_risk += 20
+            watson_flags.append(f"High fear emotion: {fear_score:.2f}")
+
+        # Suspicious keywords
+        scam_keywords = ['money', 'win', 'prize', 'click', 'verify', 'account', 'bank', 'otp', 'urgent']
+        matched_keywords = [kw['text'] for kw in keywords if kw['text'].lower() in scam_keywords]
+        if matched_keywords:
+            watson_risk += len(matched_keywords) * 10
+            watson_flags.append(f"Scam keywords detected: {', '.join(matched_keywords)}")
+
+        return {
+            "watson_risk_boost": min(watson_risk, 40),
+            "watson_flags": watson_flags,
+            "sentiment": sentiment.get('label', 'neutral'),
+            "dominant_emotion": max(emotion, key=emotion.get) if emotion else "neutral",
+            "top_keywords": [kw['text'] for kw in keywords[:5]],
+            "categories": [c['label'] for c in categories[:2]]
+        }
+
+    except Exception as e:
+        print(f"Watson analysis error: {str(e)}")
+        return None
 
 
 # ===== CONFIDENCE BREAKDOWN =====
@@ -99,61 +187,63 @@ def multi_step_reasoning(message_text):
     steps = []
 
     # Step 1 — Initial scan
-    steps.append({
-        "step": 1,
-        "title": "INITIAL PATTERN SCAN",
-        "status": "running"
-    })
+    steps.append({"step": 1, "title": "INITIAL PATTERN SCAN", "status": "running"})
     time.sleep(0.5)
-
     links, suspicious_links = extract_links(message_text)
-    step1_finding = f"Found {len(links)} link(s), {len(suspicious_links)} suspicious"
-    steps[0]["finding"] = step1_finding
+    steps[0]["finding"] = f"Found {len(links)} link(s), {len(suspicious_links)} suspicious"
     steps[0]["status"] = "done"
 
     # Step 2 — Sender reputation
-    steps.append({
-        "step": 2,
-        "title": "SENDER REPUTATION CHECK",
-        "status": "running"
-    })
+    steps.append({"step": 2, "title": "SENDER REPUTATION CHECK", "status": "running"})
     time.sleep(0.5)
-
     rep_score, rep_flags = check_sender_reputation(message_text)
     steps[1]["finding"] = f"Reputation score: {rep_score}% suspicious. {len(rep_flags)} flag(s)"
     steps[1]["status"] = "done"
 
-    # Step 3 — AI Deep Analysis
-    steps.append({
-        "step": 3,
-        "title": "GROQ AI DEEP ANALYSIS",
-        "status": "running"
-    })
+    # Step 3 — IBM Watson Analysis (NEW!)
+    watson_result = None
+    if watson_available:
+        steps.append({"step": 3, "title": "IBM WATSON NLU ANALYSIS", "status": "running"})
+        time.sleep(0.5)
+        watson_result = watson_analyze(message_text)
+        if watson_result:
+            steps[2]["finding"] = f"Sentiment: {watson_result['sentiment']} | Emotion: {watson_result['dominant_emotion']} | Risk boost: +{watson_result['watson_risk_boost']}%"
+            steps[2]["status"] = "done"
+        else:
+            steps[2]["finding"] = "Watson analysis unavailable"
+            steps[2]["status"] = "error"
+        step_offset = 1
+    else:
+        step_offset = 0
+
+    # Step 3/4 — Groq AI Deep Analysis
+    steps.append({"step": 3 + step_offset, "title": "GROQ AI DEEP ANALYSIS", "status": "running"})
 
     prompt = f"""
     You are SafeNet, an expert AI cybersecurity agent detecting digital scams in India.
 
     Analyze this message thoroughly and return ONLY valid JSON:
     {{
-        "risk_score": (0-100),
+        "risk_score": (0-100 integer),
         "threat_type": ("PHISHING" | "BANK FRAUD" | "FAKE JOB" | "LOTTERY SCAM" | "CREDENTIAL THEFT" | "IMPERSONATION" | "SAFE"),
         "reasoning": "2-3 lines of detailed analysis",
         "action": ("BLOCKED" | "WARNING" | "CLEAR"),
-        "confidence": (0-100),
+        "confidence": (0-100 integer),
         "red_flags": ["flag1", "flag2"],
         "recommendation": "What user should do"
     }}
 
     Message: \"\"\"{message_text}\"\"\"
 
-    Return ONLY JSON. No extra text.
+    Return ONLY JSON. No preamble, no explanation, no markdown.
     """
 
+    groq_success = False
     try:
-        response = client.chat.completions.create(
-            model="llama3-8b-8192",
+        response = groq_client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
             messages=[
-                {"role": "system", "content": "You are a cybersecurity expert. Respond in valid JSON only."},
+                {"role": "system", "content": "You are a cybersecurity expert. Respond in valid JSON only. No markdown."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.1,
@@ -161,52 +251,63 @@ def multi_step_reasoning(message_text):
         )
 
         result_text = response.choices[0].message.content.strip()
+        print(f"[DEBUG] Groq raw response: {result_text[:200]}")
 
+        # Clean markdown if present
         if "```json" in result_text:
             result_text = result_text.split("```json")[1].split("```")[0].strip()
         elif "```" in result_text:
             result_text = result_text.split("```")[1].split("```")[0].strip()
 
         result = json.loads(result_text)
+        groq_success = True
 
-        steps[2]["finding"] = f"AI confidence: {result.get('confidence', 'N/A')}% | Threat: {result['threat_type']}"
-        steps[2]["status"] = "done"
+        # Boost risk score with Watson data if available
+        if watson_result:
+            original_score = result['risk_score']
+            result['risk_score'] = min(original_score + watson_result['watson_risk_boost'], 100)
+            result['red_flags'] = result.get('red_flags', []) + watson_result['watson_flags']
+
+        steps[-1]["finding"] = f"AI confidence: {result.get('confidence', 'N/A')}% | Threat: {result['threat_type']}"
+        steps[-1]["status"] = "done"
 
     except Exception as e:
+        error_detail = traceback.format_exc()
+        print(f"[GROQ ERROR FULL]: {error_detail}")
+        print(f"[GROQ ERROR SHORT]: {str(e)}")
+
         result = {
             "risk_score": 50,
             "threat_type": "UNKNOWN",
-            "reasoning": "Analysis incomplete. Please retry.",
+            "reasoning": f"AI Error: {str(e)[:100]}",
             "action": "WARNING",
             "confidence": 0,
-            "red_flags": [],
+            "red_flags": [f"Groq error: {str(e)[:80]}"],
             "recommendation": "Exercise caution with this message."
         }
-        steps[2]["finding"] = "AI analysis failed — using fallback"
-        steps[2]["status"] = "error"
 
-    # Step 4 — Confidence breakdown
-    steps.append({
-        "step": 4,
-        "title": "CONFIDENCE BREAKDOWN",
-        "status": "running"
-    })
+        # If Watson succeeded, use its data even if Groq failed
+        if watson_result:
+            result['risk_score'] = min(50 + watson_result['watson_risk_boost'], 100)
+            result['red_flags'] += watson_result['watson_flags']
+            result['reasoning'] = f"Watson detected: sentiment={watson_result['sentiment']}, emotion={watson_result['dominant_emotion']}"
+
+        steps[-1]["finding"] = f"Groq failed: {str(e)[:60]}"
+        steps[-1]["status"] = "error"
+
+    # Step 4/5 — Confidence breakdown
+    steps.append({"step": len(steps) + 1, "title": "CONFIDENCE BREAKDOWN", "status": "running"})
     time.sleep(0.3)
-
     breakdown = get_confidence_breakdown(message_text, result)
-    steps[3]["finding"] = f"{len(breakdown)} risk factor(s) identified"
-    steps[3]["status"] = "done"
+    steps[-1]["finding"] = f"{len(breakdown)} risk factor(s) identified"
+    steps[-1]["status"] = "done"
 
-    # Step 5 — Final verdict
-    steps.append({
-        "step": 5,
-        "title": "FINAL VERDICT",
-        "status": "running"
-    })
+    # Step 5/6 — Final verdict
+    steps.append({"step": len(steps) + 1, "title": "FINAL VERDICT", "status": "running"})
     time.sleep(0.3)
-
-    steps[4]["finding"] = f"Risk Score: {result['risk_score']}% — Action: {result['action']}"
-    steps[4]["status"] = "done"
+    engine = "Groq + Watson" if (groq_success and watson_available) else ("Watson Only" if watson_available else "Groq Only")
+    steps[-1]["finding"] = f"Risk Score: {result['risk_score']}% — Action: {result['action']} [{engine}]"
+    steps[-1]["status"] = "done"
 
     # Save to DB
     save_log(
