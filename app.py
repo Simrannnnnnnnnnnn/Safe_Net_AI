@@ -344,6 +344,29 @@ with tab3:
 with tab4:
     st.markdown('<div class="sn-section-label">📧 &nbsp; GMAIL AUTO-SCANNER</div>', unsafe_allow_html=True)
 
+    try:
+        from gmail_utils import get_auth_url, get_credentials_from_code
+
+        # ===== AUTO-CAPTURE CODE FROM URL =====
+        # Jab Google redirect karta hai, code URL mein aata hai
+        # e.g. https://safenet-ai.streamlit.app/?code=4/0Axxx
+        query_params = st.query_params
+        url_code = query_params.get("code", None)
+
+        if url_code and not st.session_state.get('gmail_token'):
+            with st.spinner("🔐 Gmail authorize ho raha hai..."):
+                if get_credentials_from_code(url_code):
+                    # Code use ho gaya — URL clean karo
+                    st.query_params.clear()
+                    st.success("✅ Gmail Connected! Scanning shuru...")
+                    st.rerun()
+                else:
+                    st.query_params.clear()
+                    st.error("❌ Authorization fail. Dobara try karo.")
+
+    except Exception as e:
+        st.error(f"Gmail module error: {str(e)}")
+
     gmail_connected = st.session_state.get('gmail_token') is not None
 
     if not gmail_connected:
@@ -351,80 +374,59 @@ with tab4:
         <div style="text-align:center;padding:40px 20px;background:rgba(234,67,53,0.04);
         border:1px solid rgba(234,67,53,0.12);border-radius:12px;margin:20px 0;">
           <div style="font-size:40px;margin-bottom:16px;">📧</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:2px;">
-            GMAIL NOT CONNECTED
-          </div>
-          <div style="font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,0.4);margin-top:8px;">
-            Connect karo — SafeNet automatically tumhara inbox scan karega
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;
+          color:rgba(255,255,255,0.5);letter-spacing:2px;">GMAIL NOT CONNECTED</div>
+          <div style="font-family:'DM Sans',sans-serif;font-size:13px;
+          color:rgba(255,255,255,0.4);margin-top:8px;">
+            Connect karo — SafeNet automatically inbox scan karega
           </div>
         </div>""", unsafe_allow_html=True)
 
         try:
-            from gmail_utils import get_auth_url, get_credentials_from_code
-
-            # ===== SECRET CHECK =====
-            try:
-                client_id = st.secrets.get("GMAIL_CLIENT_ID", "")
-                redirect  = st.secrets.get("GMAIL_REDIRECT_URI", "")
-                if not client_id:
-                    st.error("❌ GMAIL_CLIENT_ID Streamlit Secrets mein nahi hai! Settings → Secrets mein add karo.")
-                    st.stop()
-                else:
-                    st.markdown(f"""
-                    <div style="font-family:'JetBrains Mono',monospace;font-size:9px;
-                    color:rgba(61,255,160,0.6);padding:8px 14px;
-                    background:rgba(61,255,160,0.03);border-radius:6px;margin-bottom:16px;">
-                      ✅ Secrets OK — Client ID: ...{client_id[-20:]}<br>
-                      ✅ Redirect URI: {redirect}
-                    </div>""", unsafe_allow_html=True)
-            except Exception as se:
-                st.error(f"❌ Secrets error: {str(se)}")
+            # Secret check
+            client_id = st.secrets.get("GMAIL_CLIENT_ID", "")
+            redirect  = st.secrets.get("GMAIL_REDIRECT_URI", "")
+            if not client_id:
+                st.error("❌ GMAIL_CLIENT_ID Secrets mein nahi hai!")
                 st.stop()
 
-            # ===== AUTH URL =====
-            try:
-                auth_url = get_auth_url()
-            except Exception as ae:
-                st.error(f"❌ Auth URL generate nahi hua: {str(ae)}")
-                st.stop()
+            st.markdown(f"""
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;
+            color:rgba(61,255,160,0.6);padding:8px 14px;
+            background:rgba(61,255,160,0.03);border-radius:6px;margin-bottom:16px;">
+              ✅ Secrets OK — ...{client_id[-20:]}<br>
+              ✅ Redirect: {redirect}
+            </div>""", unsafe_allow_html=True)
 
-            # ===== CONNECT UI =====
+            # Auth URL generate
+            auth_url = get_auth_url()
+
+            # ONE-CLICK connect — user sirf click kare, code automatic capture hoga
             _, col_mid, _ = st.columns([1, 2, 1])
             with col_mid:
                 st.markdown(f"""
-                <div style="padding:24px;background:rgba(61,255,160,0.04);
-                border:1px solid rgba(61,255,160,0.12);border-radius:10px;
-                font-family:'JetBrains Mono',monospace;font-size:10px;text-align:center;">
-                  <div style="color:var(--mint);margin-bottom:16px;letter-spacing:2px;">
-                    STEP 1 — AUTHORIZE SAFENET
+                <div style="padding:28px;background:rgba(61,255,160,0.04);
+                border:1px solid rgba(61,255,160,0.15);border-radius:12px;
+                font-family:'JetBrains Mono',monospace;text-align:center;">
+                  <div style="font-size:32px;margin-bottom:12px;">📧</div>
+                  <div style="color:var(--mint);font-size:11px;letter-spacing:3px;margin-bottom:20px;">
+                    ONE-CLICK GMAIL CONNECT
                   </div>
-                  <a href="{auth_url}" target="_blank"
-                  style="display:inline-block;padding:10px 24px;
-                  background:rgba(61,255,160,0.1);border:1px solid rgba(61,255,160,0.3);
-                  color:#3dffa0;border-radius:6px;text-decoration:none;
-                  font-size:11px;letter-spacing:2px;">
-                    🔗 Open Gmail Authorization →
+                  <a href="{auth_url}"
+                  style="display:inline-block;padding:12px 28px;
+                  background:rgba(61,255,160,0.12);border:1px solid rgba(61,255,160,0.4);
+                  color:#3dffa0;border-radius:8px;text-decoration:none;
+                  font-size:11px;letter-spacing:2px;font-family:'JetBrains Mono',monospace;">
+                    🔗 CONNECT GMAIL →
                   </a>
-                  <div style="color:var(--muted);margin-top:16px;">
-                    STEP 2 — Jo code mile woh neeche paste karo ↓
+                  <div style="color:var(--muted);font-size:9px;margin-top:16px;line-height:1.8;">
+                    Click karo → Gmail account select karo → Allow karo<br>
+                    ✨ Code automatic capture ho jayega — kuch paste nahi karna!
                   </div>
                 </div>""", unsafe_allow_html=True)
 
-                st.markdown("<br>", unsafe_allow_html=True)
-                auth_code = st.text_input("Authorization Code", placeholder="4/0AfGeXxx...")
-                if st.button("✅ VERIFY & CONNECT GMAIL", use_container_width=True):
-                    if auth_code.strip():
-                        with st.spinner("Verifying..."):
-                            if get_credentials_from_code(auth_code.strip()):
-                                st.success("✅ Gmail Connected! Auto-scan shuru ho raha hai...")
-                                st.rerun()
-                            else:
-                                st.error("❌ Invalid code. Dobara try karo.")
-                    else:
-                        st.warning("⚠️ Pehle code paste karo!")
-
         except Exception as e:
-            st.error(f"Gmail module error: {str(e)}")
+            st.error(f"Error: {str(e)}")
 
     else:
         # ===== GMAIL CONNECTED — FULL AUTO SCAN =====
